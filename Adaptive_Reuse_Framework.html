@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Reuse Framework</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .category {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        .chart-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Adaptive Reuse Framework</h1>
+    <div id="input-section">
+        <div class="category" id="RegulatoryAndLegal">
+            <h2>Regulatory and Legal</h2>
+            <label>Existem regulamentações específicas para reutilização adaptativa?
+                <input type="number" min="1" max="5" step="1" class="difficulty" data-category="Regulatory and Legal">
+            </label>
+            <label>O processo de obtenção de permissões é simplificado?
+                <input type="number" min="1" max="5" step="1" class="difficulty" data-category="Regulatory and Legal">
+            </label>
+            <label>Há incentivos fiscais disponíveis para este projeto?
+                <input type="number" min="1" max="5" step="1" class="difficulty" data-category="Regulatory and Legal">
+            </label>
+        </div>
+
+        <div class="category" id="Economic">
+            <h2>Economic</h2>
+            <label>Os custos iniciais do projeto são viáveis?
+                <input type="number" min="1" max="5" step="1" class="difficulty" data-category="Economic">
+            </label>
+            <label>O retorno sobre investimento é atrativo?
+                <input type="number" min="1" max="5" step="1" class="difficulty" data-category="Economic">
+            </label>
+            <label>Existem subsídios ou financiamentos disponíveis?
+                <input type="number" min="1" max="5" step="1" class="difficulty" data-category="Economic">
+            </label>
+        </div>
+
+        <button onclick="generateChart()">Generate Chart</button>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="priorityChart"></canvas>
+    </div>
+
+    <script>
+        function generateChart() {
+            const difficulties = document.querySelectorAll('.difficulty');
+            const categoryScores = {};
+            const categoryCounts = {};
+
+            difficulties.forEach(input => {
+                const category = input.dataset.category;
+                const value = parseInt(input.value);
+
+                if (!isNaN(value)) {
+                    if (!categoryScores[category]) {
+                        categoryScores[category] = 0;
+                        categoryCounts[category] = 0;
+                    }
+                    categoryScores[category] += value;
+                    categoryCounts[category] += 1;
+                }
+            });
+
+            const categories = Object.keys(categoryScores);
+            const scores = categories.map(category => categoryScores[category] / categoryCounts[category]);
+
+            const ctx = document.getElementById('priorityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Difficulty Score',
+                        data: scores,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 5
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
